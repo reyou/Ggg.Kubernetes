@@ -1,0 +1,5 @@
+Address                  HWtype  HWaddress           Flags Mask            Iface
+172.17.0.2               ether   02:42:ac:11:00:02   C                     docker0
+172.18.0.3               ether   02:42:ac:12:00:03   C                     docker_gwbridge
+172.18.0.6               ether   02:42:ac:12:00:06   C                     docker_gwbridge
+Linksys22156.hsd1.nj.co  ether   24:f5:a2:42:35:d8   C                     enp0s3
