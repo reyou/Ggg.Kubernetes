@@ -7,6 +7,7 @@ https://github.com/udacity/ud615/tree/master/app
 ### Notes
 
 Explore config file
+$ cd /go/src/github.com/udacity/ud615/kubernetes
 $ cat pods/monolith.yaml
 
 Create the monolith pod

@@ -1,0 +1,21 @@
+    Ports:       80/TCP, 81/TCP
+    Host Ports:  0/TCP, 0/TCP
+    Limits:
+      cpu:        200m
+      memory:     10Mi
+    Liveness:     http-get http://:81/healthz delay=5s timeout=5s period=15s #success=1 #failure=3
+    Readiness:    http-get http://:81/readiness delay=5s timeout=1s period=10s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   auth-5c79bb8f47 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  13s   deployment-controller  Scaled up replica set auth-5c79bb8f47 to 1
