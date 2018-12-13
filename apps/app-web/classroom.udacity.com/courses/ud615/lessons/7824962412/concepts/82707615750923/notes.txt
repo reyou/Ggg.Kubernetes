@@ -1,0 +1,42 @@
+$ gcloud container clusters create k0 --region us-east1
+ERROR: (gcloud.container.clusters.create) One of [--zone, --region] must be supplied: Please specify location.
+
+https://cloud.google.com/sdk/gcloud/reference/container/clusters/create
+https://cloud.google.com/sdk/gcloud/reference/app/regions/list
+
+ $ gcloud compute regions list
+
+ $ gcloud compute regions list
+NAME                     CPUS  DISKS_GB  ADDRESSES  RESERVED_ADDRESSES  STATUS  TURNDOWN_DATE
+asia-east1               0/72  0/40960   0/69       0/21                UP
+asia-east2               0/24  0/4096    0/8        0/8                 UP
+asia-northeast1          0/72  0/40960   0/69       0/21                UP
+asia-south1              0/24  0/4096    0/8        0/8                 UP
+asia-southeast1          0/72  0/40960   0/69       0/21                UP
+australia-southeast1     0/24  0/4096    0/8        0/8                 UP
+europe-north1            0/24  0/4096    0/8        0/8                 UP
+europe-west1             0/72  0/40960   0/69       0/21                UP
+europe-west2             0/24  0/4096    0/8        0/8                 UP
+europe-west3             0/72  0/40960   0/69       0/21                UP
+europe-west4             0/72  0/40960   0/69       0/21                UP
+northamerica-northeast1  0/24  0/4096    0/8        0/8                 UP
+southamerica-east1       0/24  0/4096    0/8        0/8                 UP
+us-central1              0/72  0/40960   0/69       0/21                UP
+us-east1                 1/72  10/40960  1/69       0/21                UP
+us-east4                 0/72  0/40960   0/69       0/21                UP
+us-west1                 0/72  0/40960   0/69       0/21                UP
+us-west2                 0/24  0/4096    0/8        0/8                 UP
+
+$ gcloud container clusters create k0 --region us-east1 
+
+WARNING: Starting in 1.12, new clusters will have basic authentication disabled by default. Basic authentication can be enabled (or disabled) manually using the `--[no-]enable-basic-auth` flag.
+WARNING: Starting in 1.12, new clusters will not have a client certificate issued. You can manually enable (or disable) the issuance of the client certificate using the `--[no-]issue-client-cer
+tificate` flag.
+WARNING: Currently VPC-native is not the default mode during cluster creation. In the future, this will become the default mode and can be disabled using `--no-enable-ip-alias` flag. Use `--[no
+-]enable-ip-alias` flag to suppress this warning.
+WARNING: Starting in 1.12, default node pools in new clusters will have their legacy Compute Engine instance metadata endpoints disabled by default. To create a cluster with legacy instance met
+adata endpoints disabled in the default node pool, run `clusters create` with the flag `--metadata disable-legacy-endpoints=true`.
+This will enable the autorepair feature for nodes. Please see https://cloud.google.com/kubernetes-engine/docs/node-auto-repair for more information on node autorepairs.
+WARNING: Starting in Kubernetes v1.10, new clusters will no longer get compute-rw and storage-ro scopes added to what is specified in --scopes (though the latter will remain included in the def
+ault --scopes). To use these scopes, add them explicitly to --scopes. To use the new behavior, set container/new_scopes_behavior property (gcloud config set container/new_scopes_behavior true).
+Creating cluster k0 in us-east1...⠧
