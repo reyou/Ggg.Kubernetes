@@ -1,0 +1,72 @@
+Step 3 - Deploy Containers
+With a running Kubernetes cluster, containers can now be deployed.
+
+Using kubectl run, it allows containers to be deployed onto the cluster - 
+
+$ kubectl run first-deployment --image=katacoda/docker-http-server --port=80
+$ kubectl delete deployment second-deployment 
+$ kubectl run second-deployment --image=microsoft/dotnet-samples:aspnetapp --port=8081
+
+The status of the deployment can be discovered via the running Pods - 
+
+$ kubectl get pods
+
+Once the container is running it can be exposed via different networking options, 
+depending on requirements. One possible solution is NodePort, that provides a dynamic port to a container.
+
+$ kubectl expose deployment first-deployment --port=80 --type=NodePort
+$ kubectl expose deployment second-deployment --port=8081 --type=NodePort
+
+The command below finds the allocated port and executes a HTTP request.
+
+$ export PORT=$(kubectl get svc first-deployment -o go-template='{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{"\n"}}{{end}}{{end}}')
+$ echo "Accessing host01:$PORT"
+$ curl host01:$PORT
+
+$ kubectl get svc second-deployment
+$ curl http://172.18.0.5:8081
+ 
+
+The results is the container that processed the request.
+
+$ kubectl get services
+$ kubectl describe service first-deployment
+$ kubectl describe service second-deployment
+$ kubectl get pods
+$ kubectl get deployments
+$ kubectl get deployments
+$ kubectl logs second-deployment-6c7f4c8596-8z4kc
+
+$ kubectl describe deployment first-deployment
+
+Name:                   first-deployment
+Namespace:              default
+CreationTimestamp:      Fri, 14 Dec 2018 21:58:35 +0000
+Labels:                 run=first-deployment
+Annotations:            deployment.kubernetes.io/revision=1
+Selector:               run=first-deployment
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  run=first-deployment
+  Containers:
+   first-deployment:
+    Image:        katacoda/docker-http-server
+    Port:         80/TCP
+    Host Port:    0/TCP
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   first-deployment-59f6bb4956 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  7m    deployment-controller  Scaled up replica set first-deployment-59f6bb4956 to 1
