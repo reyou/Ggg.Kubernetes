@@ -1,0 +1,19 @@
+Step 3 - Scale Deployment
+Details of the YAML can be changed as different configurations are required for deployment. This follows an infrastructure as code mindset. The manifests should be kept under source control and used to ensure that the configuration in production matches the configuration in source control.
+
+Task
+Update the deployment.yaml file to increase the number of instances running. For example, the file should look like this:
+
+replicas: 4
+Updates to existing definitions are applied using kubectl apply. To scale the number of replicas, deploy the updated YAML file using kubectl apply -f deployment.yaml
+
+Instantly, the desired state of our cluster has been updated, viewable with kubectl get deployment
+
+Additional Pods will be scheduled to match the request. kubectl get pods
+
+As all the Pods have the same label selector, they'll be load balanced behind the Service NodePort deployed.
+
+Issuing requests to the port will result in different containers processing the request curl host01:30080
+
+Additional Kubernetes Networking details and Object Definitions will will be covered in future scenarios.
+

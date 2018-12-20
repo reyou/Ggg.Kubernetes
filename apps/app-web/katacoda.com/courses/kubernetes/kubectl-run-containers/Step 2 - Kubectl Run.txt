@@ -1,0 +1,21 @@
+The run command creates a deployment based on the parameters specified, such as the image or replicas. This deployment is issued to the Kubernetes master which launches the Pods and containers required. Kubectl run_ is similar to docker run but at a cluster level.
+
+The format of the command is kubectl run <name of deployment> <properties>
+
+Task
+The following command will launch a deployment called http which will start a container based on the Docker Image katacoda/docker-http-server:latest.
+```
+$ kubectl run http --image=katacoda/docker-http-server:latest --replicas=1
+```
+You can then use kubectl to view the status of the deployments
+```
+$ kubectl get deployments
+```
+To find out what Kubernetes created you can describe the deployment process.
+
+kubectl describe deployment http
+
+The description includes how many replicas are available, labels specified and the events associated with the deployment. These events will highlight any problems and errors that might have occurred.
+
+In the next step we'll expose the running service.
+

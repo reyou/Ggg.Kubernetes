@@ -1,0 +1,20 @@
+Step 5 - Scale Containers
+With our deployment running we can now use kubectl to scale the number of replicas.
+
+Scaling the deployment will request Kubernetes to launch additional Pods. These Pods will then automatically be load balanced using the exposed Service.
+
+Task
+The command kubectl scale allows us to adjust the number of Pods running for a particular deployment or replication controller.
+```
+$ kubectl scale --replicas=3 deployment http
+```
+Listing all the pods, you should see three running for the http deployment kubectl get pods
+
+Once each Pod starts it will be added to the load balancer service. By describing the service you can view the endpoint and the associated Pods which are included.
+```
+$ kubectl describe svc http
+```
+Making requests to the service will request in different nodes processing the request.
+```
+$ curl http://172.17.0.19:8000
+```

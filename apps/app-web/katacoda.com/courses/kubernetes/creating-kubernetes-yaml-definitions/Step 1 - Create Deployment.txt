@@ -1,0 +1,30 @@
+Step 1 - Create Deployment
+One of the most common Kubernetes object is the deployment object. 
+The deployment object defines the container spec required, along with the name 
+and labels used by other parts of Kubernetes to discover and connect to the application.
+
+Task
+Copy the following definition to the editor. The definition defines how to launch an application called webapp1 using the Docker Image katacoda/docker-http-server that runs on Port 80.
+
+Copy to EditorapiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webapp1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webapp1
+    spec:
+      containers:
+      - name: webapp1
+        image: katacoda/docker-http-server:latest
+        ports:
+        - containerPort: 80
+This is deployed to the cluster with the command kubectl create -f deployment.yaml
+
+As it's a Deployment object, a list of all the deployed objects can be obtained via kubectl get deployment
+
+Details of individual deployments can be outputted with kubectl describe deployment webapp1
+
