@@ -1,0 +1,11 @@
+Step 5 - Redis Slave Service
+As before we need to make our slaves accessible to incoming requests. This is done by starting a service which knows how to communicate with redis-slave.
+
+Because we have two replicated pods the service will also provide load balancing between the two nodes.
+
+Start Redis Slave Service
+kubectl create -f redis-slave-service.yaml
+
+kubectl get services
+
+

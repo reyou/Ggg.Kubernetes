@@ -1,0 +1,23 @@
+Step 2 - Redis Master Controller
+The first stage of launching the application is to start the Redis Master. A Kubernetes service deployment has, at least, two parts. A replication controller and a service.
+
+The replication controller defines how many instances should be running, the Docker Image to use, and a name to identify the service. Additional options can be utilized for configuration and discovery. Use the editor above to view the YAML definition.
+
+If Redis were to go down, the replication controller would restart it on an active node.
+
+Create Replication Controller
+In this example, the YAML defines a redis server called redis-master using the official redis running port 6379.
+
+The kubectl create command takes a YAML definition and instructs the master to start the controller.
+
+kubectl create -f redis-master-controller.yaml
+
+What's running?
+The above command created a Replication Controller. The Replication
+
+kubectl get rc
+
+All containers described as Pods. A pod is a collection of containers that makes up a particular application, for example Redis. You can view this using kubectl
+
+kubectl get pods
+

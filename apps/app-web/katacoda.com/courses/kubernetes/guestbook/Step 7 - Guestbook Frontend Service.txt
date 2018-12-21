@@ -1,0 +1,14 @@
+Step 7 - Guestbook Frontend Service
+To make the frontend accessible we need to start a service to configure the proxy.
+
+Start Proxy
+The YAML defines the service as a NodePort. NodePort allows you to set well-known ports that are shared across your entire cluster. This is like -p 80:80 in Docker.
+
+In this case, we define our web app is running on port 80 but we'll expose the service on 30080.
+
+kubectl create -f frontend-service.yaml
+
+kubectl get services
+
+We'll discuss NodePort in future scenarios.
+

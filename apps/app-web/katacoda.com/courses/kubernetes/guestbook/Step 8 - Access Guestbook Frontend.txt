@@ -1,0 +1,18 @@
+Step 8 - Access Guestbook Frontend
+With all controllers and services defined Kubernetes will start launching them as Pods. A pod can have different states depending on what's happening. For example, if the Docker Image is still being downloaded then the Pod will have a pending state as it's not able to launch. Once ready the status will change to running.
+
+View Pods Status
+You can view the status using the following command:
+
+kubectl get pods
+
+Find NodePort
+If you didn't assign a well-known NodePort then Kubernetes will assign an available port randomly. You can find the assigned NodePort using kubectl.
+
+kubectl describe service frontend | grep NodePort
+
+View UI
+Once the Pod is in running state you will be able to view the UI via port 30080. Use the URL to view the page https://2886795333-30080-ollie02.environments.katacoda.com
+
+Under the covers the PHP service is discovering the Redis instances via DNS. You now have a working multi-tier application deployed on Kubernetes.
+

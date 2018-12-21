@@ -1,0 +1,16 @@
+Step 6 - Frontend Replicated Pods
+With the data services started we can now deploy the web application. The pattern of deploying a web application is the same as the pods we've deployed before.
+
+Launch Frontend
+The YAML defines a service called frontend that uses the image _gcr.io/googlesamples/gb-frontend:v3. The replication controller will ensure that three pods will always exist.
+
+kubectl create -f frontend-controller.yaml
+
+List controllers and pods
+kubectl get rc
+
+kubectl get pods
+
+PHP Code
+The PHP code uses HTTP and JSON to communicate with Redis. When setting a value requests go to redis-master while read data comes from the redis-slave nodes.
+
