@@ -1,0 +1,45 @@
+Helm deploys all the pods, replication controllers and services. Use kubectl to find out what was deployed.
+
+```
+$ kubectl get all
+
+NAME                                               READY     STATUS    RESTARTS   AGE
+pod/mollified-zebra-redis-master-0                 0/1       Pending   0          2m
+pod/mollified-zebra-redis-slave-785467c76c-fs56p   0/1       Running   0          2m
+
+NAME                                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes                     ClusterIP   10.96.0.1       <none>        443/TCP    23m
+service/mollified-zebra-redis-master   ClusterIP   10.109.0.108    <none>        6379/TCP   2m
+service/mollified-zebra-redis-slave    ClusterIP   10.99.113.233   <none>        6379/TCP   2m
+
+NAME                                          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mollified-zebra-redis-slave   1         1         1            0           2m
+
+NAME                                                     DESIRED   CURRENT   READY     AGE
+replicaset.apps/mollified-zebra-redis-slave-785467c76c   1         1         0         2m
+
+NAME                                            DESIRED   CURRENT   AGE
+statefulset.apps/mollified-zebra-redis-master   1         1         2m
+```
+
+The pod will be in a pending state while the Docker Image is downloaded and until a Persistent Volume is available.
+
+```
+$ kubectl apply -f pv.yaml
+```
+
+Redis needs permissions to write 
+
+```
+$ chmod 777 -R /mnt/data*
+```
+
+Once complete it will move into a running state. You'll now have a Redis Cluster running on top of Kubernetes.
+
+The helm could be provided with a more friendly name, such as:
+
+```
+$ helm install --name my-release stable/redis
+$ helm ls
+$ kubectl get all
+```
