@@ -44,6 +44,7 @@ $ microk8s.kubectl create -f https://k8s.io/examples/pods/config/redis-pod.yaml
 $ microk8s.kubectl get pods
 $ microk8s.kubectl describe pod redis
 $ microk8s.kubectl delete pods redis
+$ microk8s.kubectl get all
 ```
 
 In the example, the config volume is mounted at /redis-master. 
@@ -55,5 +56,17 @@ Use kubectl exec to enter the pod and run the redis-cli tool to verify that the 
 
 ```
 $ microk8s.kubectl exec -it redis redis-cli
+```
+```
+$ 127.0.0.1:6379> info replication
+
+# Replication
+role:master
+connected_slaves:0
+master_repl_offset:0
+repl_backlog_active:0
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:0
+repl_backlog_histlen:0
 ```
 
