@@ -1,0 +1,46 @@
+Step 1 - Create Deployment
+To start, deploy an example HTTP server that will be the target of our requests. 
+The deployment contains three deployments, one called webapp1 and a second called webapp2, 
+and a third called webapp3 with a service for each.
+
+```
+$ cat deployment.yaml
+```
+
+Task
+Deploy the definitions with 
+
+```
+$ kubectl apply -f deployment.yaml
+```
+
+The status can be viewed with 
+
+```
+$ kubectl get deployment
+```
+
+```
+master $ kubectl get all
+
+NAME                           READY     STATUS    RESTARTS   AGE
+pod/webapp1-7d67d68676-z82bj   1/1       Running   0          10s
+pod/webapp2-64d4844b78-8ckjk   1/1       Running   0          10s
+pod/webapp3-5b8ff7484d-7t4pw   1/1       Running   0          10s
+
+NAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes    ClusterIP   10.96.0.1       <none>        443/TCP   2m
+service/webapp1-svc   ClusterIP   10.102.188.43   <none>        80/TCP    10s
+service/webapp2-svc   ClusterIP   10.111.97.248   <none>        80/TCP    9s
+service/webapp3-svc   ClusterIP   10.97.192.45    <none>        80/TCP    9s
+
+NAME                      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/webapp1   1         1         1            1           10s
+deployment.apps/webapp2   1         1         1            1           10s
+deployment.apps/webapp3   1         1         1            1           10s
+
+NAME                                 DESIRED   CURRENT   READY     AGE
+replicaset.apps/webapp1-7d67d68676   1         1         1         10s
+replicaset.apps/webapp2-64d4844b78   1         1         1         10s
+replicaset.apps/webapp3-5b8ff7484d   1         1         1         10s
+```

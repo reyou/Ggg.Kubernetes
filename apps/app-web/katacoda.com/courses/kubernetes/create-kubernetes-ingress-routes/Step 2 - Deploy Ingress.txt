@@ -1,0 +1,39 @@
+The YAML file ingress.yaml defines a Nginx-based Ingress controller together 
+with a service making it available on Port 80 to external connections 
+using ExternalIPs. 
+
+If the Kubernetes cluster was running on a cloud provider then it would use a 
+LoadBalancer service type.
+
+The ServiceAccount defines the account with a set of permissions on how to access the 
+cluster to access the defined Ingress Rules. 
+
+The default server secret is a self-signed certificate for other Nginx example SSL 
+connections and is required by the Nginx Default Example.
+
+```
+$ cat ingress.yaml
+```
+
+Task
+The Ingress controllers are deployed in a familiar fashion to other Kubernetes objects with 
+
+```
+$ kubectl create -f ingress.yaml
+
+namespace/nginx-ingress created
+secret/default-server-secret created
+serviceaccount/nginx-ingress created
+configmap/nginx-config created
+deployment.extensions/nginx-ingress created
+service/nginx-ingress created
+```
+
+The status can be identified using 
+
+```
+$ kubectl get deployment -n nginx-ingress
+
+NAME            DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-ingress   1         1         1            1           52s
+```
