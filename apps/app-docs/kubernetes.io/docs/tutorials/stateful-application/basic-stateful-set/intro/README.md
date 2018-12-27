@@ -4,37 +4,30 @@
 * Title:	Dynamic Volume Provisioning - Kubernetes
   * Url:	https://kubernetes.io/docs/concepts/storage/dynamic-provisioning/
 
+### Dynamically provision PersistentVolumes 
 ```
+$ microk8s.kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
+$ microk8s.kubectl create -f kubernetes-dashboard.yaml
+$ microk8s.kubectl proxy
 $ microk8s.kubectl get all
-
-NAME        READY   STATUS    RESTARTS   AGE
-pod/redis   1/1     Running   1          18h
-
-NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
-service/kubernetes   ClusterIP   10.152.183.1   <none>        443/TCP   24h
+$ microk8s.kubectl apply -f dynProvPersVols.yaml
+$ microk8s.kubectl apply -f dynProvPersVols.web.yaml
+$ microk8s.kubectl get sc
 ```
 
-This tutorial assumes that your cluster is configured to dynamically provision PersistentVolumes. 
-If your cluster is not configured to do so, you will have to manually provision 
-two 1 GiB volumes prior to starting this tutorial.
+* Title:	DNS is crashlooping · Issue #67 · ubuntu/microk8s
+  * Url:	https://github.com/ubuntu/microk8s/issues/67
 
-Begin by creating a StatefulSet using the example below. 
-It is similar to the example presented in the StatefulSets concept. 
-It creates a Headless Service, nginx, to publish the IP addresses of Pods in the 
-StatefulSet, web.
+```
+$ sudo ufw allow in on cbr0 && sudo ufw allow out on cbr0
+```
 
-You will need to use two terminal windows. 
-In the first terminal, use kubectl get to watch the creation of the StatefulSet’s Pods.
+ ### Create the Headless Service and StatefulSet defined in web.yaml.
 
 ```
 $ microk8s.kubectl get all
-$ microk8s.kubectl get pods -w -l app=nginx
-```
-
-In the second terminal, use kubectl create to create the Headless Service and StatefulSet defined in web.yaml.
-
-```
-$ microk8s.kubectl get all
+$ microk8s.kubectl delete -f web.yaml 
+$ microk8s.kubectl delete pvc www-web-0
 $ microk8s.kubectl create -f web.yaml 
 
 service/nginx created
