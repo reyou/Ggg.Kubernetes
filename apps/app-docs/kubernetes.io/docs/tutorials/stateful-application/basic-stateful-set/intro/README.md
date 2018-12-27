@@ -6,9 +6,6 @@
 
 ### Dynamically provision PersistentVolumes 
 ```
-$ microk8s.kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
-$ microk8s.kubectl create -f kubernetes-dashboard.yaml
-$ microk8s.kubectl proxy
 $ microk8s.kubectl get all
 $ microk8s.kubectl apply -f dynProvPersVols.yaml
 $ microk8s.kubectl apply -f dynProvPersVols.web.yaml
