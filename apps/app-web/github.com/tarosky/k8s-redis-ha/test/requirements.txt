@@ -1,0 +1,7 @@
+autopep8
+redis
+flake8
+ipython
+isort
+nose
+yapf

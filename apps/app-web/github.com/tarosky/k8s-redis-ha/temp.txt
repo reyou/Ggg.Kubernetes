@@ -1,0 +1,4 @@
+ Error: failed to start container "redis-server": Error response from daemon: OCI runtime 
+ create failed: container_linux.go:348: starting container process caused 
+ "exec: \"/opt/bin/k8s-redis-ha-server\": stat /opt/bin/k8s-redis-ha-server: no such file or directory": unknown
+Back-off restarting failed container 
