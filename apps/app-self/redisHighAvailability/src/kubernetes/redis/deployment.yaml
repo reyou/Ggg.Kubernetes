@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redisharedis
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: redisharedis
+    spec:
+      containers:
+        - name: redisharedis
+          image: aozdemir/redisharedis:v1
+          resources:
+            limits:
+              cpu: "1"
+              memory: "800Mi"
+            requests:
+              cpu: "0.5"
+              memory: "200Mi"
+          ports:
+            - containerPort: 6380
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redisharedis-service
+  labels:
+    name: redisharedis-service
+spec:
+  ports:
+    - port: 6380
+      targetPort: 6380
+      protocol: TCP
+  selector:
+    app: redisharedis
+  type: ClusterIP
