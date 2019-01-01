@@ -1,0 +1,847 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-01-01T19:22:10Z"
+    generateName: cluster-init-secure-
+    labels:
+      controller-uid: 890d9f1a-0dfa-11e9-a5ad-080027636618
+      job-name: cluster-init-secure
+    name: cluster-init-secure-cs2b2
+    namespace: default
+    ownerReferences:
+    - apiVersion: batch/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Job
+      name: cluster-init-secure
+      uid: 890d9f1a-0dfa-11e9-a5ad-080027636618
+    resourceVersion: "508053"
+    selfLink: /api/v1/namespaces/default/pods/cluster-init-secure-cs2b2
+    uid: 890e88ab-0dfa-11e9-a5ad-080027636618
+  spec:
+    containers:
+    - command:
+      - /cockroach/cockroach
+      - init
+      - --certs-dir=/cockroach-certs
+      - --host=cockroachdb-0.cockroachdb
+      image: cockroachdb/cockroach:v2.1.3
+      imagePullPolicy: IfNotPresent
+      name: cluster-init
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach-certs
+        name: client-certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    initContainers:
+    - command:
+      - /bin/ash
+      - -ecx
+      - /request-cert -namespace=${POD_NAMESPACE} -certs-dir=/cockroach-certs -type=client
+        -user=root -symlink-ca-from=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      env:
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imagePullPolicy: IfNotPresent
+      name: init-certs
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach-certs
+        name: client-certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    nodeName: aozdemir-virtualbox
+    priority: 0
+    restartPolicy: OnFailure
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: cockroachdb
+    serviceAccountName: cockroachdb
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - emptyDir: {}
+      name: client-certs
+    - name: cockroachdb-token-64df8
+      secret:
+        defaultMode: 420
+        secretName: cockroachdb-token-64df8
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:22:10Z"
+      message: 'containers with incomplete status: [init-certs]'
+      reason: ContainersNotInitialized
+      status: "False"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:22:10Z"
+      message: 'containers with unready status: [cluster-init]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:22:10Z"
+      message: 'containers with unready status: [cluster-init]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:22:10Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - image: cockroachdb/cockroach:v2.1.3
+      imageID: ""
+      lastState: {}
+      name: cluster-init
+      ready: false
+      restartCount: 0
+      state:
+        waiting:
+          reason: PodInitializing
+    hostIP: 192.168.1.104
+    initContainerStatuses:
+    - containerID: docker://5922880c0351298d87da52b10174bcaace38f30580393b725e0a1ac2745d9083
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imageID: docker-pullable://cockroachdb/cockroach-k8s-request-cert@sha256:d512bc05c482a1c164544e68299ff7616d4a26325ac9aa2c2ddce89bc241c792
+      lastState:
+        terminated:
+          containerID: docker://5922880c0351298d87da52b10174bcaace38f30580393b725e0a1ac2745d9083
+          exitCode: 1
+          finishedAt: "2019-01-01T19:33:25Z"
+          reason: Error
+          startedAt: "2019-01-01T19:33:25Z"
+      name: init-certs
+      ready: false
+      restartCount: 7
+      state:
+        waiting:
+          message: Back-off 5m0s restarting failed container=init-certs pod=cluster-init-secure-cs2b2_default(890e88ab-0dfa-11e9-a5ad-080027636618)
+          reason: CrashLoopBackOff
+    phase: Pending
+    podIP: 10.1.1.105
+    qosClass: BestEffort
+    startTime: "2019-01-01T19:22:10Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-01-01T19:20:42Z"
+    generateName: cockroachdb-
+    labels:
+      app: cockroachdb
+      controller-revision-hash: cockroachdb-6c48bc945c
+      statefulset.kubernetes.io/pod-name: cockroachdb-0
+    name: cockroachdb-0
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: cockroachdb
+      uid: 5465638f-0dfa-11e9-a5ad-080027636618
+    resourceVersion: "508316"
+    selfLink: /api/v1/namespaces/default/pods/cockroachdb-0
+    uid: 5468546c-0dfa-11e9-a5ad-080027636618
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - cockroachdb
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - command:
+      - /bin/bash
+      - -ecx
+      - exec /cockroach/cockroach start --logtostderr --certs-dir /cockroach/cockroach-certs
+        --advertise-host $(hostname -f) --http-host 0.0.0.0 --join cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
+        --cache 25% --max-sql-memory 25%
+      env:
+      - name: COCKROACH_CHANNEL
+        value: kubernetes-secure
+      image: cockroachdb/cockroach:v2.1.3
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTPS
+        initialDelaySeconds: 30
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: cockroachdb
+      ports:
+      - containerPort: 26257
+        name: grpc
+        protocol: TCP
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 2
+        httpGet:
+          path: /health?ready=1
+          port: http
+          scheme: HTTPS
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach/cockroach-data
+        name: datadir
+      - mountPath: /cockroach/cockroach-certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: cockroachdb-0
+    initContainers:
+    - command:
+      - /bin/ash
+      - -ecx
+      - /request-cert -namespace=${POD_NAMESPACE} -certs-dir=/cockroach-certs -type=node
+        -addresses=localhost,127.0.0.1,$(hostname -f),$(hostname -f|cut -f 1-2 -d
+        '.'),cockroachdb-public,cockroachdb-public.$(hostname -f|cut -f 3- -d '.')
+        -symlink-ca-from=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      env:
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imagePullPolicy: IfNotPresent
+      name: init-certs
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach-certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    nodeName: aozdemir-virtualbox
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: cockroachdb
+    serviceAccountName: cockroachdb
+    subdomain: cockroachdb
+    terminationGracePeriodSeconds: 60
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: datadir
+      persistentVolumeClaim:
+        claimName: datadir-cockroachdb-0
+    - emptyDir: {}
+      name: certs
+    - name: cockroachdb-token-64df8
+      secret:
+        defaultMode: 420
+        secretName: cockroachdb-token-64df8
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with incomplete status: [init-certs]'
+      reason: ContainersNotInitialized
+      status: "False"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with unready status: [cockroachdb]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with unready status: [cockroachdb]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - image: cockroachdb/cockroach:v2.1.3
+      imageID: ""
+      lastState: {}
+      name: cockroachdb
+      ready: false
+      restartCount: 0
+      state:
+        waiting:
+          reason: PodInitializing
+    hostIP: 192.168.1.104
+    initContainerStatuses:
+    - containerID: docker://2cdf5f6622614ca568e022fae9a9376ee23765d1c8c671d874b6676286c4af35
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imageID: docker-pullable://cockroachdb/cockroach-k8s-request-cert@sha256:d512bc05c482a1c164544e68299ff7616d4a26325ac9aa2c2ddce89bc241c792
+      lastState:
+        terminated:
+          containerID: docker://2cdf5f6622614ca568e022fae9a9376ee23765d1c8c671d874b6676286c4af35
+          exitCode: 1
+          finishedAt: "2019-01-01T19:36:57Z"
+          reason: Error
+          startedAt: "2019-01-01T19:36:57Z"
+      name: init-certs
+      ready: false
+      restartCount: 8
+      state:
+        waiting:
+          message: Back-off 5m0s restarting failed container=init-certs pod=cockroachdb-0_default(5468546c-0dfa-11e9-a5ad-080027636618)
+          reason: CrashLoopBackOff
+    phase: Pending
+    podIP: 10.1.1.102
+    qosClass: BestEffort
+    startTime: "2019-01-01T19:20:42Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-01-01T19:20:42Z"
+    generateName: cockroachdb-
+    labels:
+      app: cockroachdb
+      controller-revision-hash: cockroachdb-6c48bc945c
+      statefulset.kubernetes.io/pod-name: cockroachdb-1
+    name: cockroachdb-1
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: cockroachdb
+      uid: 5465638f-0dfa-11e9-a5ad-080027636618
+    resourceVersion: "508343"
+    selfLink: /api/v1/namespaces/default/pods/cockroachdb-1
+    uid: 5468fe39-0dfa-11e9-a5ad-080027636618
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - cockroachdb
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - command:
+      - /bin/bash
+      - -ecx
+      - exec /cockroach/cockroach start --logtostderr --certs-dir /cockroach/cockroach-certs
+        --advertise-host $(hostname -f) --http-host 0.0.0.0 --join cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
+        --cache 25% --max-sql-memory 25%
+      env:
+      - name: COCKROACH_CHANNEL
+        value: kubernetes-secure
+      image: cockroachdb/cockroach:v2.1.3
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTPS
+        initialDelaySeconds: 30
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: cockroachdb
+      ports:
+      - containerPort: 26257
+        name: grpc
+        protocol: TCP
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 2
+        httpGet:
+          path: /health?ready=1
+          port: http
+          scheme: HTTPS
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach/cockroach-data
+        name: datadir
+      - mountPath: /cockroach/cockroach-certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: cockroachdb-1
+    initContainers:
+    - command:
+      - /bin/ash
+      - -ecx
+      - /request-cert -namespace=${POD_NAMESPACE} -certs-dir=/cockroach-certs -type=node
+        -addresses=localhost,127.0.0.1,$(hostname -f),$(hostname -f|cut -f 1-2 -d
+        '.'),cockroachdb-public,cockroachdb-public.$(hostname -f|cut -f 3- -d '.')
+        -symlink-ca-from=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      env:
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imagePullPolicy: IfNotPresent
+      name: init-certs
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach-certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    nodeName: aozdemir-virtualbox
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: cockroachdb
+    serviceAccountName: cockroachdb
+    subdomain: cockroachdb
+    terminationGracePeriodSeconds: 60
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: datadir
+      persistentVolumeClaim:
+        claimName: datadir-cockroachdb-1
+    - emptyDir: {}
+      name: certs
+    - name: cockroachdb-token-64df8
+      secret:
+        defaultMode: 420
+        secretName: cockroachdb-token-64df8
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with incomplete status: [init-certs]'
+      reason: ContainersNotInitialized
+      status: "False"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with unready status: [cockroachdb]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with unready status: [cockroachdb]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - image: cockroachdb/cockroach:v2.1.3
+      imageID: ""
+      lastState: {}
+      name: cockroachdb
+      ready: false
+      restartCount: 0
+      state:
+        waiting:
+          reason: PodInitializing
+    hostIP: 192.168.1.104
+    initContainerStatuses:
+    - containerID: docker://70c2091eb0db3db2e9a4d3a93d1d8f6fa00930bebcfa94ee98591101096e2121
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imageID: docker-pullable://cockroachdb/cockroach-k8s-request-cert@sha256:d512bc05c482a1c164544e68299ff7616d4a26325ac9aa2c2ddce89bc241c792
+      lastState:
+        terminated:
+          containerID: docker://70c2091eb0db3db2e9a4d3a93d1d8f6fa00930bebcfa94ee98591101096e2121
+          exitCode: 1
+          finishedAt: "2019-01-01T19:37:04Z"
+          reason: Error
+          startedAt: "2019-01-01T19:37:04Z"
+      name: init-certs
+      ready: false
+      restartCount: 8
+      state:
+        waiting:
+          message: Back-off 5m0s restarting failed container=init-certs pod=cockroachdb-1_default(5468fe39-0dfa-11e9-a5ad-080027636618)
+          reason: CrashLoopBackOff
+    phase: Pending
+    podIP: 10.1.1.104
+    qosClass: BestEffort
+    startTime: "2019-01-01T19:20:42Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-01-01T19:20:42Z"
+    generateName: cockroachdb-
+    labels:
+      app: cockroachdb
+      controller-revision-hash: cockroachdb-6c48bc945c
+      statefulset.kubernetes.io/pod-name: cockroachdb-2
+    name: cockroachdb-2
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: cockroachdb
+      uid: 5465638f-0dfa-11e9-a5ad-080027636618
+    resourceVersion: "508340"
+    selfLink: /api/v1/namespaces/default/pods/cockroachdb-2
+    uid: 546af0e4-0dfa-11e9-a5ad-080027636618
+  spec:
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - cockroachdb
+            topologyKey: kubernetes.io/hostname
+          weight: 100
+    containers:
+    - command:
+      - /bin/bash
+      - -ecx
+      - exec /cockroach/cockroach start --logtostderr --certs-dir /cockroach/cockroach-certs
+        --advertise-host $(hostname -f) --http-host 0.0.0.0 --join cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
+        --cache 25% --max-sql-memory 25%
+      env:
+      - name: COCKROACH_CHANNEL
+        value: kubernetes-secure
+      image: cockroachdb/cockroach:v2.1.3
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: http
+          scheme: HTTPS
+        initialDelaySeconds: 30
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: cockroachdb
+      ports:
+      - containerPort: 26257
+        name: grpc
+        protocol: TCP
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 2
+        httpGet:
+          path: /health?ready=1
+          port: http
+          scheme: HTTPS
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach/cockroach-data
+        name: datadir
+      - mountPath: /cockroach/cockroach-certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: cockroachdb-2
+    initContainers:
+    - command:
+      - /bin/ash
+      - -ecx
+      - /request-cert -namespace=${POD_NAMESPACE} -certs-dir=/cockroach-certs -type=node
+        -addresses=localhost,127.0.0.1,$(hostname -f),$(hostname -f|cut -f 1-2 -d
+        '.'),cockroachdb-public,cockroachdb-public.$(hostname -f|cut -f 3- -d '.')
+        -symlink-ca-from=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      env:
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imagePullPolicy: IfNotPresent
+      name: init-certs
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /cockroach-certs
+        name: certs
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: cockroachdb-token-64df8
+        readOnly: true
+    nodeName: aozdemir-virtualbox
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: cockroachdb
+    serviceAccountName: cockroachdb
+    subdomain: cockroachdb
+    terminationGracePeriodSeconds: 60
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: datadir
+      persistentVolumeClaim:
+        claimName: datadir-cockroachdb-2
+    - emptyDir: {}
+      name: certs
+    - name: cockroachdb-token-64df8
+      secret:
+        defaultMode: 420
+        secretName: cockroachdb-token-64df8
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with incomplete status: [init-certs]'
+      reason: ContainersNotInitialized
+      status: "False"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with unready status: [cockroachdb]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      message: 'containers with unready status: [cockroachdb]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:20:42Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - image: cockroachdb/cockroach:v2.1.3
+      imageID: ""
+      lastState: {}
+      name: cockroachdb
+      ready: false
+      restartCount: 0
+      state:
+        waiting:
+          reason: PodInitializing
+    hostIP: 192.168.1.104
+    initContainerStatuses:
+    - containerID: docker://9ee4384c23b5a4c9e9f4e36be0b2f1278548de602d416c5610f1f72e8e05775a
+      image: cockroachdb/cockroach-k8s-request-cert:0.4
+      imageID: docker-pullable://cockroachdb/cockroach-k8s-request-cert@sha256:d512bc05c482a1c164544e68299ff7616d4a26325ac9aa2c2ddce89bc241c792
+      lastState:
+        terminated:
+          containerID: docker://9ee4384c23b5a4c9e9f4e36be0b2f1278548de602d416c5610f1f72e8e05775a
+          exitCode: 1
+          finishedAt: "2019-01-01T19:37:01Z"
+          reason: Error
+          startedAt: "2019-01-01T19:37:00Z"
+      name: init-certs
+      ready: false
+      restartCount: 8
+      state:
+        waiting:
+          message: Back-off 5m0s restarting failed container=init-certs pod=cockroachdb-2_default(546af0e4-0dfa-11e9-a5ad-080027636618)
+          reason: CrashLoopBackOff
+    phase: Pending
+    podIP: 10.1.1.103
+    qosClass: BestEffort
+    startTime: "2019-01-01T19:20:42Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2019-01-01T19:32:23Z"
+    name: termination-demo
+    namespace: default
+    resourceVersion: "508314"
+    selfLink: /api/v1/namespaces/default/pods/termination-demo
+    uid: f635a286-0dfb-11e9-a5ad-080027636618
+  spec:
+    containers:
+    - args:
+      - -c
+      - sleep 10 && echo Sleep expired > /dev/termination-log
+      command:
+      - /bin/sh
+      image: debian
+      imagePullPolicy: Always
+      name: termination-demo-container
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-vp4vw
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: aozdemir-virtualbox
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: default-token-vp4vw
+      secret:
+        defaultMode: 420
+        secretName: default-token-vp4vw
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:32:23Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:36:45Z"
+      message: 'containers with unready status: [termination-demo-container]'
+      reason: ContainersNotReady
+      status: "False"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:36:45Z"
+      message: 'containers with unready status: [termination-demo-container]'
+      reason: ContainersNotReady
+      status: "False"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2019-01-01T19:32:23Z"
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - containerID: docker://067406c2794e4ee2817c087b7e3939177f8466c4c853c44ee3979e66d4f0d8f4
+      image: debian:latest
+      imageID: docker-pullable://debian@sha256:58a80e0b6aa4d960ee2a5452b0230c406c47ed30a66555ba753c8e1710a434f5
+      lastState:
+        terminated:
+          containerID: docker://067406c2794e4ee2817c087b7e3939177f8466c4c853c44ee3979e66d4f0d8f4
+          exitCode: 0
+          finishedAt: "2019-01-01T19:36:44Z"
+          message: |
+            Sleep expired
+          reason: Completed
+          startedAt: "2019-01-01T19:36:34Z"
+      name: termination-demo-container
+      ready: false
+      restartCount: 5
+      state:
+        waiting:
+          message: Back-off 2m40s restarting failed container=termination-demo-container
+            pod=termination-demo_default(f635a286-0dfb-11e9-a5ad-080027636618)
+          reason: CrashLoopBackOff
+    hostIP: 192.168.1.104
+    phase: Running
+    podIP: 10.1.1.106
+    qosClass: BestEffort
+    startTime: "2019-01-01T19:32:23Z"
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
