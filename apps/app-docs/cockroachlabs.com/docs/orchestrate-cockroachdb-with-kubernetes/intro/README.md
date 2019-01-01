@@ -8,7 +8,7 @@ From your local workstation, use our cockroachdb-statefulset-secure.yaml
 file to create the StatefulSet that automatically creates 3 pods, 
 each with a CockroachDB node running inside it:
 
-### Start CockroachDB
+### Start CockroachDB 
 
 ```
 $ cd /home/aozdemir/Documents/github.com/Ggg.Kubernetes/apps/app-docs/cockroachlabs.com/docs/orchestrate-cockroachdb-with-kubernetes/intro/
