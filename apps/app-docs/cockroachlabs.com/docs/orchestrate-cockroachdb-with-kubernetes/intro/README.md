@@ -18,7 +18,7 @@ $ microk8s.kubectl delete -f ./statefulSet/cockroachdb-statefulset-secure.yaml
 $ microk8s.kubectl create -f ./statefulSet/cockroachdb-statefulset-secure.yaml
 ```
 
-### Persisten Volume
+### Persistent Volume
 ```
 $ microk8s.kubectl create -f ./statefulSet/persistentVolume1.yaml
 $ microk8s.kubectl create -f ./statefulSet/persistentVolume2.yaml
@@ -29,6 +29,11 @@ Get the name of the Pending CSR for the first pod:
 
 ``` 
 $ microk8s.kubectl get csr
+
+$ microk8s.kubectl delete csr default.client.root
+$ microk8s.kubectl delete csr default.node.cockroachdb-0
+$ microk8s.kubectl delete csr default.node.cockroachdb-1
+$ microk8s.kubectl delete csr default.node.cockroachdb-2
 ```
 
 ### Approve the CSR
@@ -38,8 +43,9 @@ If everything looks correct, approve the CSR for the first pod:
 ``` 
 $ microk8s.kubectl certificate approve default.node.cockroachdb-0
 $ microk8s.kubectl certificate approve default.node.cockroachdb-1
-$ microk8s.kubectl certificate approve default.node.cockroachdb-2
+$ microk8s.kubectl certificate approve default.node.cockroachdb-2 
 ```
+
 
 Confirm that three pods are Running successfully. Note that they will not be considered Ready until after the cluster has been initialized:
 
