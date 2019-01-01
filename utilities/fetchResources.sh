@@ -22,6 +22,11 @@ do
     echo "Storage Classes:" 
     echo "----------"
     microk8s.kubectl get sc
+    
+    echo
+    echo "Certificate Signing Request (CSRs):" 
+    echo "----------"
+    microk8s.kubectl get csr
 
     echo
     echo "Press [CTRL+C] to stop.."
