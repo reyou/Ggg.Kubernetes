@@ -1,5 +1,9 @@
 #!/bin/bash
-
+# https://ss64.com/bash/
+# -e  Exit immediately if a command exits with a non-zero status.
+# -u  Treat unset variables as an error when substituting.
+# -x  Print commands and their arguments as they are executed.
+# Using + rather than - will cause the option to be turned off. 
 set -eux
 
 namespace="$(< /var/run/secrets/kubernetes.io/serviceaccount/namespace)"
@@ -9,6 +13,7 @@ readonly sentinel_domain="_$SENTINEL_PORT._tcp.$SENTINEL.$namespace.svc.cluster.
 
 redis_info () {
   set +e
+  # ‘s’ for seconds (the default)
   timeout 10 redis-cli -h "$1" -a "$service_domain" info replication
   set -e
 }
