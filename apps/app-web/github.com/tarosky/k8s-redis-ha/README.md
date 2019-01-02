@@ -7,6 +7,7 @@ If you already have a Kubernetes cluster, you can deploy High Availability Redis
 
 ```
 $ cd /home/aozdemir/Documents/github.com/Ggg.Kubernetes/apps/app-web/github.com/tarosky/k8s-redis-ha/
+$ cd /home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-web/github.com/tarosky/k8s-redis-ha/ 
 $ microk8s.kubectl delete -f example/
 $ microk8s.kubectl create -f example/
 

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Config
+users:
+- name: svcs-acct-local
+  user:
+    token: eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InN2Y3MtYWNjdC1sb2NhbC10b2tlbi1uN3hzdiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJzdmNzLWFjY3QtbG9jYWwiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIzNTU5Y2IzYy0wZWFlLTExZTktYWUzYS0wODAwMjc4YjFiM2EiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6ZGVmYXVsdDpzdmNzLWFjY3QtbG9jYWwifQ.OV_KU4FeG6vDezhnbUlk87OiluuXjIS___QDCrVTOTim1n0ZSwiFAZLwOXDiE8WI4xj1lICnK17QugfcB_AiUTf1UkYZ59LBTFhzZpUmorveQpuQwC8oB_D82mmil_RzNLNoFF5cLrKY-7sUjDeddyXQV0GN7omm0a9SW0JS0zf8xx2ZWzxByimEQTAWWIVqO-7h1w6KApImuaBQP54E8BJa__ygzNMnMFt9fWPBQtu-Lgpms2q1xxzuB9ZtVgSAeFj-p-hWro1J7RUNawfoChQwqaiMctaPj0iMfjuHJnVnZvA1SUXnA5FZSX0Un4_tqGJWJ5VaHkUYuNk5LpDpFw
+clusters:
+- cluster:    
+    server: http://127.0.0.1:8080
+  name: self-hosted-cluster
+contexts:
+- context:
+    cluster: self-hosted-cluster
+    user: svcs-acct-local
+  name: svcs-acct-context
+current-context: svcs-acct-context
