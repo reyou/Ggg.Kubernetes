@@ -10,6 +10,8 @@
 ### Deploy
 ```
 $ cd /home/aozdemir/Documents/github.com/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/kubernetes/redis/
+$ cd /home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/kubernetes/redis/
+# update deployment
 $ microk8s.kubectl delete -f deployment.yaml
 $ microk8s.kubectl apply -f deployment.yaml
 ```

@@ -1,3 +1,5 @@
 FROM redis
-COPY redis.conf /usr/local/etc/redis/redis.conf
-CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+COPY ["startup.sh","/home"] 
+COPY ["redis.conf", "sentinel.conf", "/usr/local/etc/redis/"]
+RUN ["chmod", "+x", "/home/startup.sh"]
+CMD ["/home/startup.sh"]
