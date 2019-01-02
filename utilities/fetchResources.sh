@@ -27,6 +27,11 @@ do
     echo "Certificate Signing Request (CSRs):" 
     echo "----------"
     microk8s.kubectl get csr
+    
+    echo
+    echo "Secrets:" 
+    echo "----------"
+    microk8s.kubectl get secrets
 
     echo
     echo "Press [CTRL+C] to stop.."
