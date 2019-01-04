@@ -4,6 +4,10 @@
 * Title:	conjure up · reyou/Ggg.Kubernetes Wiki
   * Url:	https://github.com/reyou/Ggg.Kubernetes/wiki/conjure-up
 
+* Title:	flant/kube-redis: Redis on Kubernetes as StatefulSet
+  * Url:	https://github.com/flant/kube-redis
+
+
 ```
 $ microk8s.kubectl
 ```

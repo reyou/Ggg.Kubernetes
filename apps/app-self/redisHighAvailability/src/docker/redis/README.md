@@ -21,6 +21,9 @@ $ sudo docker push aozdemir/redisharedis:v6
 ```
 
 ### endpoints
+```
+$ microk8s.kubectl proxy
+```
 http://127.0.0.1:8001/api/v1/namespaces/default/endpoints
 https://10.152.183.1/api/v1/namespaces/default/endpoints
 
