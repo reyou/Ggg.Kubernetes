@@ -34,4 +34,21 @@ $ set test qqq
 $ get test
 ```
 
+https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/ 
+
+The domain managed by this Service takes the form: $(service name).$(namespace).svc.cluster.local, 
+where “cluster.local” is the cluster domain. 
+As each Pod is created, it gets a matching DNS subdomain, 
+taking the form: $(podname).$(governing service domain)
+
+curl redisharedis-service.default.svc.cluster.local
+
+https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+
+cluster domain: cluster.local	
+service: nginx	
+statefulset: web	
+statefulset domain: nginx.default.svc.cluster.local	
+pod: web-{0..N-1}.nginx.default.svc.cluster.local	web-{0..N-1}
+
  

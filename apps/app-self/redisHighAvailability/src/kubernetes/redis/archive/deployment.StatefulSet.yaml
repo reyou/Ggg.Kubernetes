@@ -1,0 +1,116 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvredis1
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: standard
+  hostPath:
+    path: "/usr/share/redis"
+---   
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvredis2
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: standard
+  hostPath:
+    path: "/usr/share/redis" 
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvredis3
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: standard
+  hostPath:
+    path: "/usr/share/redis"  
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redisharedis
+spec:
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-pvc
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 10Mi
+  selector:
+    matchLabels:
+      app: redisharedis  
+  serviceName: "redisharedisservice"
+  replicas: 3  
+  template:
+    metadata:
+      labels:
+        app: redisharedis  
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: redisharedis
+          image: aozdemir/redisharedis:v6          
+          resources:
+            limits:
+              cpu: "1"
+              memory: "800Mi"
+            requests:
+              cpu: "0.1"
+              memory: "200Mi"
+          ports:
+            - containerPort: 6379
+        - name: redishanodejsrediswatcher
+          image: aozdemir/redishanodejsrediswatcher:v6    
+          volumeMounts:
+          - mountPath: /usr/share/redis
+            name: redis-pvc                 
+          resources:
+            limits:
+              cpu: "1"
+              memory: "100Mi"
+            requests:
+              cpu: "0.1"
+              memory: "100Mi"
+          ports:
+            - containerPort: 80           
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redisharedisservice
+  labels:
+    name: redisharedis-service
+spec:
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+      protocol: TCP
+    - name: nodejs
+      port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: redisharedis
+  type: ClusterIP

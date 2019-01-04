@@ -4,8 +4,8 @@
 * Title:	conjure up · reyou/Ggg.Kubernetes Wiki
   * Url:	https://github.com/reyou/Ggg.Kubernetes/wiki/conjure-up
 
-* Title:	flant/kube-redis: Redis on Kubernetes as StatefulSet
-  * Url:	https://github.com/flant/kube-redis
+* Title:	Multi-container pods and container communication in Kubernetes
+  * Url:	https://www.mirantis.com/blog/multi-container-pods-and-container-communication-in-kubernetes/
 
 
 ```
