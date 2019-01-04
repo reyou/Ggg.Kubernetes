@@ -35,6 +35,6 @@ do
 
     echo
     echo "Press [CTRL+C] to stop.."
-	sleep 10
+	sleep $1
     clear
 done
