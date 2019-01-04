@@ -4,7 +4,10 @@ RUN apt-get update -yq \
     && curl -sL https://deb.nodesource.com/setup_8.x | bash \
     && apt-get install nodejs -yq
 COPY ["startup.sh","/home"] 
-COPY ["redis.conf", "sentinel.conf", "/usr/local/etc/redis/"]
+COPY ["redis.conf", "/usr/local/etc/redis/redis.conf"]
+COPY ["redis.conf", "/usr/local/etc/redis/redis.conf.original"]
+COPY ["sentinel.conf", "/usr/local/etc/redis/sentinel.conf"]
+COPY ["sentinel.conf", "/usr/local/etc/redis/sentinel.conf.original"]
 RUN ["chmod", "+x", "/home/startup.sh"]
 # node
 WORKDIR /app

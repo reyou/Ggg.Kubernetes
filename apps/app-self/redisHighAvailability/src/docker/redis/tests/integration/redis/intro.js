@@ -3,7 +3,7 @@ console.log("Running redis test.");
 var redis = require("redis");
 var client = redis.createClient(); // this creates a new client
 let port = "6379";
-let host = "127.0.0.1";
+let host = "10.152.183.41";
 var client = redis.createClient(port, host);
 client.on("connect", function() {
   console.log("Redis client connected");

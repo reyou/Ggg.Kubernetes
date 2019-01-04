@@ -11,16 +11,62 @@ var exec = require("child_process").exec;
 const fs = require("fs");
 var port = 80;
 var sharePath = "/usr/share/redis";
-var redisConfigPath = "/usr/local/etc/redis/redis.conf";
-var redisConfigPath = "/usr/local/etc/redis/sentinel.conf";
+var redisConfigPath = getRedisConfigPath();
+var sentinelConfigPath = getSentinelConfigPath();
 var express = require("express");
 var app = express();
+
+function getRedisConfigPath() {
+  if (process.env.USER === "root") {
+    return "/home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/docker/redis/redis.conf";
+  } else {
+    return "/usr/local/etc/redis/redis.conf";
+  }
+}
+
+function getSentinelConfigPath() {
+  if (process.env.USER === "root") {
+    return "/home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/docker/redis/sentinel.conf";
+  } else {
+    return "/usr/local/etc/redis/sentinel.conf";
+  }
+}
+function getOriginalRedisConfigPath() {
+  if (process.env.USER === "root") {
+    return redisConfigPath;
+  } else {
+    return redisConfigPath + ".original";
+  }
+}
+
+function getOriginalSentinelConfigPath() {
+  if (process.env.USER === "root") {
+    return sentinelConfigPath;
+  } else {
+    return sentinelConfigPath + ".original";
+  }
+}
+function getTargetRedisConfigPath() {
+  if (process.env.USER === "root") {
+    return "/home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/docker/redis/redis2.conf";
+  } else {
+    return redisConfigPath;
+  }
+}
+
+function getTargetSentinelConfigPath() {
+  if (process.env.USER === "root") {
+    return "/home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/docker/redis/sentinel2.conf";
+  } else {
+    return sentinelConfigPath;
+  }
+}
 
 //Define request response in root URL (/)
 app.get("/", function(req, res) {
   var debugObj = {
     Env: process.env,
-    DevVersion: "3",
+    DevVersion: "4",
     HostName: process.env.HOSTNAME,
     RedisClaimPath: getRedisClaimPath(),
     RedisFileExists: isClaimed(),
@@ -36,9 +82,86 @@ app.get("/claim", function(req, res) {
 });
 
 app.get("/reload", function(req, res) {
-  executeCommand(`redis-server ${redisConfigPath}`, req, res);
+  executeCommand(`redis-server ${redisConfigPath}`, function(callback) {
+    onRedisReload(req, res, callback);
+  });
 });
 
+function onRedisReload(req, res, responseObject) {
+  res.send(JSON.stringify(responseObject));
+}
+
+app.get("/replicaof", function(req, res) {
+  // # replicaof <masterip> <masterport>
+  setServerAsReplica(function(responseObject) {
+    onRedisRestart(req, res, responseObject);
+  });
+});
+
+function setRedisReplicaConfig() {
+  let originalRedisConfigPath = getOriginalRedisConfigPath();
+  let originalRedisConfig = fs.readFileSync(originalRedisConfigPath, "utf8");
+  let masterip = "redishapod1-service";
+  let masterport = "6379";
+  let newRedisConfig = originalRedisConfig.replace(
+    "# replicaof <masterip> <masterport>",
+    `replicaof ${masterip} ${masterport}`
+  );
+  let targetRedisConfigPath = getTargetRedisConfigPath();
+  fs.writeFileSync(targetRedisConfigPath, newRedisConfig);
+}
+function setSentinelConfig() {
+  let originalSentinelConfigPath = getOriginalSentinelConfigPath();
+  let originalSentinelConfig = fs.readFileSync(
+    originalSentinelConfigPath,
+    "utf8"
+  );
+  let masterip = "redishapod1-service";
+  let masterport = "6379";
+  let newSentinelConfig = originalSentinelConfig.replace(
+    "{master}",
+    `${masterip}`
+  );
+  newSentinelConfig = newSentinelConfig.replace("{port}", `${masterport}`);
+  let targetSentinelConfigPath = getTargetSentinelConfigPath();
+  fs.writeFileSync(targetSentinelConfigPath, newSentinelConfig);
+}
+function setServerAsReplica(callback) {
+  redisRestart(function(redisRestartResponse) {
+    sentinelStart(function(sentinelRestartResponse) {
+      sentinelRestartResponse.redisRestartResponse = redisRestartResponse;
+      callback(sentinelRestartResponse);
+    });
+  });
+}
+function onRedisRestart(req, res, responseObject) {
+  res.send("<pre>" + JSON.stringify(responseObject, null, 4) + "</pre>");
+}
+function sentinelStart(callback) {
+  callback({
+    sentinelStart: "Not using HA."
+  });
+  return;
+  setSentinelConfig();
+  let targetPath = getTargetSentinelConfigPath();
+  executeCommand(`redis-server ${targetPath} --sentinel`, callback);
+}
+function redisRestart(callback) {
+  redisShutDown(function(shutDownResult) {
+    redisStart(function(startResult) {
+      startResult.shutDownResult = shutDownResult;
+      callback(startResult);
+    });
+  });
+}
+function redisStart(callback) {
+  setRedisReplicaConfig();
+  let targetPath = getTargetRedisConfigPath();
+  executeCommand(`redis-server ${targetPath} --daemonize yes`, callback);
+}
+function redisShutDown(callback) {
+  executeCommand("redis-cli shutdown", callback);
+}
 function getAllClaimPaths() {
   let claims = getRedisClaimFileNames();
   let claimPaths = [];
@@ -59,21 +182,9 @@ function getAllClaims() {
   }
   return claims;
 }
-app.get("/join", function(req, res) {
-  // get all claims
-  var allClaims = getAllClaims();
-  // check master
-  // claim as master
-  // claim as replica
-  redisShutDown(req, res);
-  res.send(`<pre>Joined.</pre>`);
-});
 
-function redisShutDown(req, res) {
-  executeCommand("redis-cli shutdown", req, res);
-}
-
-function executeCommand(commandText, req, res) {
+function executeCommand(commandText, callback) {
+  console.log("executeCommand:", commandText);
   var resObj = {};
   var dir = exec(commandText, function(error, stdout, stderr) {
     resObj.onExit = false;
@@ -88,35 +199,29 @@ function executeCommand(commandText, req, res) {
   dir.on("error", function(code) {
     resObj.last = "on error";
     resObj.onError = true;
-    console.log(JSON.stringify(resObj));
-    res.send(JSON.stringify(resObj));
+    callback(resObj);
   });
 
   dir.on("exit", function(code) {
     resObj.last = "on exit";
     resObj.onExit = true;
-    console.log(JSON.stringify(resObj));
-    // res.send(JSON.stringify(resObj));
   });
   dir.on("close", function(code) {
     resObj.last = "on close";
     resObj.onClose = true;
     if (!resObj.onExit) {
-      console.log(JSON.stringify(resObj));
-      res.send(JSON.stringify(resObj));
+      callback(resObj);
     }
   });
   dir.on("disconnect", function(code) {
     resObj.last = "on disconnect";
     resObj.onDisconnect = true;
-    console.log(JSON.stringify(resObj));
-    res.send(JSON.stringify(resObj));
+    callback(resObj);
   });
   dir.on("message", function(code) {
     resObj.last = "on message";
     resObj.onMessage = true;
-    console.log(JSON.stringify(resObj));
-    res.send(JSON.stringify(resObj));
+    callback(resObj);
   });
 }
 
@@ -136,9 +241,18 @@ function deleteAllClaims() {
     fs.unlinkSync(claim);
   }
 }
-
 function initializeRedisClaim() {
-  createClaimFile();
+  if (process.env.HOSTNAME != "redishapod1") {
+    setServerAsReplica(function(responseObject) {
+      responseObject.HOSTNAME = process.env.HOSTNAME;
+      console.log("initializeRedisClaim:", JSON.stringify(responseObject));
+    });
+  } else {
+    sentinelStart(function(responseObject) {
+      responseObject.HOSTNAME = process.env.HOSTNAME;
+      console.log("initializeRedisClaim:", JSON.stringify(responseObject));
+    });
+  }
 }
 function createClaimFile() {
   var filePath = getRedisClaimPath();
