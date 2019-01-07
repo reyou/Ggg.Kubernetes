@@ -16,6 +16,7 @@ var express = require("express");
 var app = express();
 let masterip = "redishapod1-service";
 let masterport = "6379";
+let redisMasterDbPath = "/usr/share/redis";
 
 //Define request response in root URL (/)
 app.get("/", function(req, res) {
@@ -43,6 +44,20 @@ function setRedisReplicaConfig() {
   let targetRedisConfigPath = getTargetRedisConfigPath();
   fs.writeFileSync(targetRedisConfigPath, newRedisConfig);
 }
+
+// https://redis.io/topics/persistence
+function setRedisMasterConfig() {
+  let originalRedisConfigPath = getOriginalRedisConfigPath();
+  let originalRedisConfig = fs.readFileSync(originalRedisConfigPath, "utf8");
+
+  let newRedisConfig = originalRedisConfig.replace(
+    "dir ./",
+    `dir ${redisMasterDbPath}`
+  );
+  newRedisConfig = newRedisConfig.replace(`appendonly no`, `appendonly yes`);
+  let targetRedisConfigPath = getTargetRedisConfigPath();
+  fs.writeFileSync(targetRedisConfigPath, newRedisConfig);
+}
 function setSentinelConfig() {
   let originalSentinelConfigPath = getOriginalSentinelConfigPath();
   let originalSentinelConfig = fs.readFileSync(
@@ -57,7 +72,7 @@ function setSentinelConfig() {
   let targetSentinelConfigPath = getTargetSentinelConfigPath();
   fs.writeFileSync(targetSentinelConfigPath, newSentinelConfig);
 }
-function setServerAsReplica(callback) {
+function setServerConfigAndRestart(callback) {
   redisRestart(function(redisRestartResponse) {
     sentinelStart(function(sentinelRestartResponse) {
       sentinelRestartResponse.redisRestartResponse = redisRestartResponse;
@@ -84,7 +99,11 @@ function redisRestart(callback) {
   });
 }
 function redisStart(callback) {
-  setRedisReplicaConfig();
+  if (isMaster()) {
+    setRedisMasterConfig();
+  } else {
+    setRedisReplicaConfig();
+  }
   let targetPath = getTargetRedisConfigPath();
   executeCommand(`redis-server ${targetPath} --daemonize yes`, callback);
 }
@@ -135,26 +154,25 @@ function executeCommand(commandText, callback) {
   });
 }
 
-function initializeRedisClaim() {
-  function isMaster() {
-    return (
-      process.env.HOSTNAME && process.env.HOSTNAME.indexOf("redismaster") > -1
-    );
+function isMaster() {
+  let isMaster = false;
+  if (
+    process.env.HOSTNAME &&
+    process.env.HOSTNAME.indexOf("redismaster") > -1
+  ) {
+    isMaster = true;
   }
-  if (isMaster()) {
-    sentinelStart(function(responseObject) {
-      responseObject.HOSTNAME = process.env.HOSTNAME;
-      console.log("initializeRedisClaim:", JSON.stringify(responseObject));
-    });
-  } else {
-    setServerAsReplica(function(responseObject) {
-      responseObject.HOSTNAME = process.env.HOSTNAME;
-      console.log("initializeRedisClaim:", JSON.stringify(responseObject));
-    });
-  }
+  return isMaster;
 }
 
-initializeRedisClaim();
+function initializeServer() {
+  setServerConfigAndRestart(function(responseObject) {
+    responseObject.HOSTNAME = process.env.HOSTNAME;
+    console.log("initializeRedisClaim:", JSON.stringify(responseObject));
+  });
+}
+
+initializeServer();
 
 function getRedisConfigPath() {
   if (process.env.USER === "root") {
