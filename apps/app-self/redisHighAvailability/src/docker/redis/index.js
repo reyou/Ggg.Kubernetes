@@ -14,6 +14,8 @@ var redisConfigPath = getRedisConfigPath();
 var sentinelConfigPath = getSentinelConfigPath();
 var express = require("express");
 var app = express();
+let masterip = "redishapod1-service";
+let masterport = "6379";
 
 //Define request response in root URL (/)
 app.get("/", function(req, res) {
@@ -33,8 +35,7 @@ app.listen(port, function() {
 function setRedisReplicaConfig() {
   let originalRedisConfigPath = getOriginalRedisConfigPath();
   let originalRedisConfig = fs.readFileSync(originalRedisConfigPath, "utf8");
-  let masterip = "redishapod1-service";
-  let masterport = "6379";
+
   let newRedisConfig = originalRedisConfig.replace(
     "# replicaof <masterip> <masterport>",
     `replicaof ${masterip} ${masterport}`
@@ -48,8 +49,6 @@ function setSentinelConfig() {
     originalSentinelConfigPath,
     "utf8"
   );
-  let masterip = "redishapod1-service";
-  let masterport = "6379";
   let newSentinelConfig = originalSentinelConfig.replace(
     "{master}",
     `${masterip}`
@@ -137,13 +136,18 @@ function executeCommand(commandText, callback) {
 }
 
 function initializeRedisClaim() {
-  if (process.env.HOSTNAME != "redishapod1") {
-    setServerAsReplica(function(responseObject) {
+  function isMaster() {
+    return (
+      process.env.HOSTNAME && process.env.HOSTNAME.indexOf("redismaster") > -1
+    );
+  }
+  if (isMaster()) {
+    sentinelStart(function(responseObject) {
       responseObject.HOSTNAME = process.env.HOSTNAME;
       console.log("initializeRedisClaim:", JSON.stringify(responseObject));
     });
   } else {
-    sentinelStart(function(responseObject) {
+    setServerAsReplica(function(responseObject) {
       responseObject.HOSTNAME = process.env.HOSTNAME;
       console.log("initializeRedisClaim:", JSON.stringify(responseObject));
     });

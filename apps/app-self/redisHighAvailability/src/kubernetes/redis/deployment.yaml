@@ -1,121 +1,54 @@
-kind: PersistentVolume
 apiVersion: v1
+kind: ReplicationController
 metadata:
-  name: pv1
+  name: redismaster
   labels:
-    type: local
+    app: redismaster
 spec:
-  capacity:
-    storage: 100Mi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: standard
-  hostPath:
-    path: "/usr/share/redis"
+  replicas: 1
+  selector:
+    app: redismaster
+  template:
+    metadata:
+      name: redis
+      labels:
+        app: redismaster
+    spec:
+      containers:
+        - name: redisharedis
+          image: aozdemir/redisharedis
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+              name: redis
+            - containerPort: 80
+              name: node
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: ReplicationController
 metadata:
-    name: redis-pvc
+  name: redisslave
+  labels:
+    app: redisslave
 spec:
-    accessModes:
-      - ReadWriteMany    
-    resources:
-        requests:
-            storage: 10Mi
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: redishapod1
-  labels:
-    app: redishapod1
-spec: 
-  volumes:
-  - name: data
-    persistentVolumeClaim:
-      claimName: 'redis-pvc'     
-  containers:
-    - name: redisharedis
-      image: aozdemir/redisharedis               
-      imagePullPolicy: Always   
-      volumeMounts:
-      - mountPath: /usr/share/redis
-        name: data 
-      resources:
-        limits:
-          cpu: "1"
-          memory: "800Mi"
-        requests:
-          cpu: "0.1"
-          memory: "200Mi"
-      ports:
-        - containerPort: 6379    
-          name: redis
-        - containerPort: 80
-          name: node
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: redishapod2
-  labels:
-    app: redishapod2
-spec: 
-  volumes:
-  - name: data
-    persistentVolumeClaim:
-      claimName: 'redis-pvc'     
-  containers:
-    - name: redisharedis
-      image: aozdemir/redisharedis
-      imagePullPolicy: Always   
-      volumeMounts:
-      - mountPath: /usr/share/redis
-        name: data        
-      resources:
-        limits:
-          cpu: "1"
-          memory: "800Mi"
-        requests:
-          cpu: "0.1"
-          memory: "200Mi"
-      ports:
-        - containerPort: 6379    
-          name: redis
-        - containerPort: 80
-          name: node   
----  
-apiVersion: v1
-kind: Pod
-metadata:
-  name: redishapod3
-  labels:
-    app: redishapod3
-spec: 
-  volumes:
-  - name: data
-    persistentVolumeClaim:
-      claimName: 'redis-pvc'     
-  containers:
-    - name: redisharedis
-      image: aozdemir/redisharedis
-      imagePullPolicy: Always   
-      volumeMounts:
-      - mountPath: /usr/share/redis
-        name: data        
-      resources:
-        limits:
-          cpu: "1"
-          memory: "800Mi"
-        requests:
-          cpu: "0.1"
-          memory: "200Mi"
-      ports:
-        - containerPort: 6379    
-          name: redis
-        - containerPort: 80
-          name: node  
+  replicas: 3
+  selector:
+    app: redisslave
+  template:
+    metadata:
+      name: redis
+      labels:
+        app: redisslave
+    spec:
+      containers:
+        - name: redisharedis
+          image: aozdemir/redisharedis
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+              name: redis
+            - containerPort: 80
+              name: node
 ---
 apiVersion: v1
 kind: Service
@@ -134,45 +67,7 @@ spec:
       targetPort: 80
       protocol: TCP
   selector:
-    app: redishapod1
+    app: redismaster
   type: ClusterIP
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: redishapod2-service
-  labels:
-    name: redishapod2-service
-spec:
-  ports:
-    - name: redis
-      port: 6379
-      targetPort: 6379
-      protocol: TCP
-    - name: nodejs
-      port: 80
-      targetPort: 80
-      protocol: TCP
-  selector:
-    app: redishapod2
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redishapod3-service
-  labels:
-    name: redishapod3-service
-spec:
-  ports:
-    - name: redis
-      port: 6379
-      targetPort: 6379
-      protocol: TCP
-    - name: nodejs
-      port: 80
-      targetPort: 80
-      protocol: TCP
-  selector:
-    app: redishapod3
-  type: ClusterIP
+
