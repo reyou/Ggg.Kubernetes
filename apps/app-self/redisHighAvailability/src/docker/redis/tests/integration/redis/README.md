@@ -3,7 +3,7 @@
 
 ```
 $ microk8s.kubectl delete pods {podName} --grace-period=0 --force
-$ microk8s.kubectl delete pods redismaster-sgfhj --grace-period=0 --force
+$ microk8s.kubectl delete pods redismaster-fr4w8 --grace-period=0 --force
 ```
 
 ```
