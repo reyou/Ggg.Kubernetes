@@ -14,4 +14,7 @@ $ microk8s.kubectl get all
 $ microk8s.kubectl create -f statefulSetExample.yaml 
 ```
 
+```
+$ microk8s.kubectl exec web-0 -- nslookup web
+```
 
