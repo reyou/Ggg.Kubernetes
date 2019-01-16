@@ -103,4 +103,3 @@ spec:
     app: redismaster
   type: ClusterIP
 ---
-
