@@ -9,6 +9,11 @@ do
 	microk8s.kubectl get all
     
     echo
+    echo "Ingress:" 
+    echo "----------"
+    microk8s.kubectl get ingress
+    
+    echo
     echo "Persistent Volumes (Storages):" 
     echo "----------"
     microk8s.kubectl get pv
