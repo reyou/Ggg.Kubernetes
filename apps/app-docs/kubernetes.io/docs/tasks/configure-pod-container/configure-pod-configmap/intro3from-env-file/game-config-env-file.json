@@ -1,0 +1,17 @@
+{
+  "kind": "ConfigMap",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "game-config-env-file",
+    "namespace": "default",
+    "selfLink": "/api/v1/namespaces/default/configmaps/game-config-env-file",
+    "uid": "b883a715-1b51-11e9-93bf-0800278b1b3a",
+    "resourceVersion": "373615",
+    "creationTimestamp": "2019-01-18T18:49:01Z"
+  },
+  "data": {
+    "allowed": "\"true\"",
+    "enemies": "aliens",
+    "lives": "3"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "ConfigMap",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "game-config-3",
+    "namespace": "default",
+    "selfLink": "/api/v1/namespaces/default/configmaps/game-config-3",
+    "uid": "8b2487be-1b52-11e9-93bf-0800278b1b3a",
+    "resourceVersion": "374040",
+    "creationTimestamp": "2019-01-18T18:54:54Z"
+  },
+  "data": {
+    "game-special-key": "enemies=aliens\nlives=3\nenemies.cheat=true\nenemies.cheat.level=noGoodRotten\nsecret.code.passphrase=UUDDLRLRBABAS\nsecret.code.allowed=true\nsecret.code.lives=30"
+  }
+}

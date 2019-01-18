@@ -1,0 +1,16 @@
+{
+  "kind": "ConfigMap",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "special-config",
+    "namespace": "default",
+    "selfLink": "/api/v1/namespaces/default/configmaps/special-config",
+    "uid": "ed3ba10f-1b52-11e9-93bf-0800278b1b3a",
+    "resourceVersion": "374239",
+    "creationTimestamp": "2019-01-18T18:57:39Z"
+  },
+  "data": {
+    "special.how": "very",
+    "special.type": "charm"
+  }
+}

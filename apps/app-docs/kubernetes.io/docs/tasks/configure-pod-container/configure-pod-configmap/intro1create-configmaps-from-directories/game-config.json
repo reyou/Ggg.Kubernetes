@@ -1,0 +1,17 @@
+{
+  "kind": "ConfigMap",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "game-config",
+    "namespace": "default",
+    "selfLink": "/api/v1/namespaces/default/configmaps/game-config",
+    "uid": "8fe87475-1b50-11e9-93bf-0800278b1b3a",
+    "resourceVersion": "373019",
+    "creationTimestamp": "2019-01-18T18:40:43Z"
+  },
+  "data": {
+    "README.md": "- Title: Configure a Pod to Use a ConfigMap - Kubernetes\n  - Url: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/\n\n```\n$ microk8s.kubectl create configmap <map-name> <data-source>\n$ microk8s.kubectl create configmap game-config --from-file=configure-pod-container/configmap/kubectl/\n$ microk8s.kubectl create configmap game-config --from-file=/home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-docs/kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/intro1\n```\n",
+    "game.properties": "enemies=aliens\nlives=3\nenemies.cheat=true\nenemies.cheat.level=noGoodRotten\nsecret.code.passphrase=UUDDLRLRBABAS\nsecret.code.allowed=true\nsecret.code.lives=30",
+    "ui.properties": "color.good=purple\ncolor.bad=yellow\nallow.textmode=true\nhow.nice.to.look=fairlyNice\n"
+  }
+}
