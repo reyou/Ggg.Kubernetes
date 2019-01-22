@@ -11,12 +11,18 @@
 
 ### Deploy
 
+#### Config maps
+```
+$ cd /home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/kubernetes/redis/k8sDeployment/configs
+$ microk8s.kubectl create configmap redis-config --from-file=.
+```
+
 ```
 $ cd /home/aozdemir/Documents/github.com/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/kubernetes/redis/
 $ cd /home/aozdemir/Documents/Ggg.GitHub/Ggg.Kubernetes/apps/app-self/redisHighAvailability/src/kubernetes/redis/
 # update deployment
-$ microk8s.kubectl delete -f deployment.yaml
-$ microk8s.kubectl apply -f deployment.yaml
+$ microk8s.kubectl delete -f ./configs
+$ microk8s.kubectl apply -f ./configs
 ```
 
 ### Redis Debug

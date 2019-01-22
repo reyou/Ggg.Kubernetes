@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redisreplica
+  labels:
+    app: redisreplica
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redisreplica
+  serviceName: "redis-replica-service"
+  template:
+    metadata:
+      name: redis
+      labels:
+        app: redisreplica
+    spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: redis-config
+      containers:
+        - name: redisreplica
+          image: redis
+          command: ["redis-server"]
+          args: ["/etc/config/redis-replica.conf"]
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+              name: redis
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
